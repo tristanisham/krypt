@@ -10,7 +10,7 @@ A simple encryption/compression tool written in Go (formerly Rust).
 
 ### Todo
 * Add option to compress files
-* Add Multi-threading
+* <s>Add Multi-threading</s>
 * Add recursive encryption for directories
 
 ## About 
