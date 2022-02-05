@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"krypt/crypt"
+	"krypt/core"
 	"log"
 	"os"
 
@@ -11,7 +11,7 @@ import (
 
 func main() {
 	args := os.Args[1:]
-	lock := crypt.New()
+	lock := core.New()
 	if len(args) < 2 {
 		help_text("Insufficent number of arguments.\n")
 		os.Exit(2)
@@ -19,9 +19,9 @@ func main() {
 
 	switch args[0] {
 	case "u", "unlock":
-		lock.Action = crypt.Unlock
+		lock.Action = core.Unlock
 	case "l", "lock":
-		lock.Action = crypt.Lock
+		lock.Action = core.Lock
 	default:
 		help_text("Help:.\n")
 		os.Exit(2)
@@ -48,8 +48,8 @@ func main() {
 func help_text(message string) {
 	fmt.Println(
 		message,
-		"\t", colors.As("u", colors.Bold), "|", colors.As("unlock", colors.Bold), " => Sets krypt mode to decrypt\n",
-		"\t", colors.As("l", colors.Bold), "|", colors.As("lock", colors.Bold), " => Sets krypt mode to encrypt\n",
+		"\t", colors.As("u", colors.Bold), "|", colors.As("unlock", colors.Bold), " => Sets krypt mode to delock\n",
+		"\t", colors.As("l", colors.Bold), "|", colors.As("lock", colors.Bold), " => Sets krypt mode to enlock\n",
 		"\t", colors.As("-i", colors.Bold), "| => Points to the file krypt should action on",
 	)
 }
