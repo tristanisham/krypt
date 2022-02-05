@@ -1,2 +1,2 @@
 krypt:
-	cd src && go build -o ../bin/krypt
+	cd src && go build -o ../dist/krypt
