@@ -33,6 +33,8 @@ func main() {
 			lock.Output = args[c+1]
 			// } else if v == "-k" && len(args) >= c+1 {
 			// 	lock.Key = args[c+1]
+		} else if v == "-x" && len(args) >= c+1 {
+			lock.Kryptfile = args[c+1]
 		}
 	}
 

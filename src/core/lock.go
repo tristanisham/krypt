@@ -9,7 +9,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"strings"
 )
 
 type Action int
@@ -20,14 +19,19 @@ const (
 )
 
 type krypt struct {
-	Input  string
-	Output string
-	Key    string
-	Action Action
+	Input     string
+	Output    string
+	Action    Action
+	Kryptfile string
 }
 
 func New() *krypt {
-	return &krypt{}
+	return &krypt{
+		Input:     "",
+		Output:    "",
+		Action:    0,
+		Kryptfile: "kryptfile",
+	}
 }
 
 func (k krypt) Start() error {
@@ -82,12 +86,12 @@ func (k *krypt) lock() error {
 		return err
 	}
 
-	if err := os.WriteFile("kryptfile", key, 0666); err != nil {
+	if err := k.writeKey(key); err != nil {
 		return err
 	}
 
 	ciphertext := gcm.Seal(nonce, nonce, file, nil)
-	hash := <- ch
+	hash := <-ch
 	secret := make([]byte, 0)
 	secret = append(secret, hash...)
 	secret = append(secret, ciphertext...)
@@ -106,8 +110,6 @@ func (k *krypt) unlock() error {
 		return err
 	}
 
-	
-
 	key, err := os.ReadFile("kryptfile")
 	if err != nil {
 		return err
@@ -123,10 +125,9 @@ func (k *krypt) unlock() error {
 		return err
 	}
 
-
 	hash := file[:32]
 	rest := file[32:]
-	
+
 	nonce := rest[:gcm.NonceSize()]
 	file = rest[gcm.NonceSize():]
 	plaintext, err := gcm.Open(nil, nonce, file, nil)
@@ -141,8 +142,8 @@ func (k *krypt) unlock() error {
 	}
 	ch := make(chan []byte)
 	go HashFile(k.Output, ch)
-	outhash := <- ch
-	
+	outhash := <-ch
+
 	if !bytes.Equal(hash, outhash) {
 		return errors.New("file does not share hash with kryptfile")
 	}
@@ -150,25 +151,8 @@ func (k *krypt) unlock() error {
 
 }
 
-func gen_key() []byte {
-	b := make([]byte, 32)
-	_, err := rand.Read(b)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return b
-}
-
-func (k *krypt) gen_outfile_name() {
-	if strings.Contains(k.Input, ".krypt") {
-		k.Output = strings.ReplaceAll(k.Input, ".krypt", "")
-	} else {
-		k.Output = k.Input
-	}
-}
-
 func (k *krypt) encrypt_large_file() error {
-	
+
 	infile, err := os.Open(k.Input)
 	if err != nil {
 		return err
@@ -211,7 +195,7 @@ func (k *krypt) encrypt_large_file() error {
 			break
 		}
 	}
-
+	k.writeKey(key)
 	outfile.Write(iv)
 
 	return nil

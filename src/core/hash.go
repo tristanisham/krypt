@@ -8,7 +8,7 @@ import (
 )
 
 func HashFile(path string, hash chan []byte) {
-	file, err := os.Open("test.txt")
+	file, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
 	}
