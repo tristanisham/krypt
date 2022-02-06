@@ -2,6 +2,7 @@ package core
 
 import (
 	"bytes"
+	"compress/gzip"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -96,7 +97,12 @@ func (k *krypt) lock() error {
 	secret = append(secret, hash...)
 	secret = append(secret, ciphertext...)
 
-	if err := os.WriteFile(k.Input+".krypt", secret, 0777); err != nil {
+	var b bytes.Buffer
+	wr := gzip.NewWriter(&b)
+	wr.Write(secret)
+	wr.Close()
+
+	if err := os.WriteFile(k.Input+".krypt", b.Bytes(), 0777); err != nil {
 		return err
 	}
 
@@ -104,11 +110,26 @@ func (k *krypt) lock() error {
 }
 
 func (k *krypt) unlock() error {
+	
+	
 
 	file, err := os.ReadFile(k.Input)
 	if err != nil {
 		return err
 	}
+
+	
+	wr, err := gzip.NewReader(bytes.NewBuffer(file))
+	if err != nil {
+		return err
+	}
+
+	file, err = io.ReadAll(wr)
+	if err != nil {
+		return err
+	}
+	wr.Close()
+
 
 	key, err := os.ReadFile("kryptfile")
 	if err != nil {
