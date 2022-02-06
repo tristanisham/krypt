@@ -1,5 +1,6 @@
 # Krypt
-*v0.2.0*
+*v0.2.2*
+
 A simple encryption/compression tool written in Go (formerly Rust).
 
 ## Features
