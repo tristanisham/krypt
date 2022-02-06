@@ -23,6 +23,7 @@ Generally, Krypt is for learning more about encryption (while still being perfec
 
 Use `l` or `lock` followed by a file path to encrypt the file. 
 * Krypt will generate an encrypted `.krypt` file that shares the name of the encrypted file.
+* Your encrypted file will also be compressed with Gzip to hide it's original length. Making it harder to determine what it might have been originally.
 * Krypt will also generate a `kryptfile`. This file contains the **private key** for your keyfile, so don't lose it.
 
 ### Decrypt File
